@@ -1,6 +1,7 @@
 import importlib
+from datetime import datetime
 
-DAY_COUNT = 1
+DAY_COUNT = datetime.today().day
 
 
 def create_solver(day_str: str, input_file):
