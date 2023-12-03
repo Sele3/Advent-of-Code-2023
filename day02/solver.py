@@ -1,3 +1,4 @@
+import re
 from collections import Counter
 from functools import reduce
 from typing import List
@@ -41,12 +42,9 @@ class Solver(BaseSolver):
         result = []
 
         for subset in line.split("; "):
-            cubes = Counter({RED: 0, GREEN: 0, BLUE: 0})
-
-            for color in subset.split(", "):
-                num, color = color.split(" ")
-                cubes[color] += int(num)
-
+            cubes = Counter(
+                {color: int(num) for num, color in re.findall(r"(\d+) (\w+)", subset)}
+            )
             result.append(cubes)
 
         return result
