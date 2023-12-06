@@ -1,6 +1,7 @@
 import re
 from collections import namedtuple
 from functools import reduce
+from math import ceil, floor, sqrt
 from operator import mul
 from typing import List
 
@@ -11,29 +12,28 @@ Race = namedtuple("Race", ("time", "record"))
 
 def count_ways_to_beat_record(race: Race) -> int:
     """
-    Count the number of ways to beat the record.
+    Count the number of ways to beat the record. Use quadratic formula to find
+    the range of speeds that can beat the record.
 
-    | Intuition
-    | - We only need to check speeds from 1 to time // 2 + 1, since it is mirrored after that.
-    | - Use binary search to find the minimum speed that can beat the record.
-    | - The number of ways to beat the record is the number of speeds >= the minimum speed.
-    | - If the time is even, we subtract 1 from the result as the speed and move time is the same value.
+    | Formula:
+    | - x = speed to find, t = race time, r = race record
+    | - we want to find x such that x * (t - x) > r
+    | - rearrange to get x^2 - tx + r < 0, therefore a = 1, b = -t, c = r
     """
-    lo, hi = 1, race.time // 2 + 1
 
-    while lo < hi:
-        speed = (lo + hi) // 2
-        move_time = race.time - speed
+    b, c = -race.time, race.record
+    # discriminant
+    d = b**2 - 4 * c
 
-        if speed * move_time <= race.record:
-            lo = speed + 1
-        else:
-            hi = speed
+    # solve for roots
+    low_root = (-b - sqrt(d)) / 2.0
+    high_root = (-b + sqrt(d)) / 2.0
 
-    # The number of ways to beat the record is the number of speeds >= the minimum speed, times 2.
-    result = ((race.time // 2) - lo + 1) * 2
-    # If the time is even, subtract 1 from the result as the speed and move time is the same value.
-    return result if race.time % 2 else result - 1
+    # find the range of speeds that can beat the record
+    # if the root is an integer, we add/subtract 1 to find strictly greater/less than
+    min_speed = int(low_root) + 1 if int(low_root) == low_root else ceil(low_root)
+    max_speed = int(high_root) - 1 if int(high_root) == high_root else floor(high_root)
+    return max_speed - min_speed + 1
 
 
 class Solver(BaseSolver):
