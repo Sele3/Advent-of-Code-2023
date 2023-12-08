@@ -6,13 +6,10 @@ DAY_COUNT = datetime.today().day
 
 def create_solver(day_str: str, input_file):
     module_name = f"day{day_str}.solver"
+    module = importlib.import_module(module_name)
 
-    try:
-        module = importlib.import_module(module_name)
-        solver_class = getattr(module, "Solver")
-        return solver_class(input_file)
-    except (ModuleNotFoundError, AttributeError):
-        raise ValueError(f"No solver implemented for day {day_str}")
+    solver_class = getattr(module, "Solver")
+    return solver_class(input_file)
 
 
 if __name__ == "__main__":
