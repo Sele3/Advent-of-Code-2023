@@ -1,8 +1,7 @@
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import List
+from typing import ClassVar, Tuple
 
-RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 SORTED_HAND_STRENGTHS = [
     [1, 1, 1, 1, 1],  # High card
     [1, 1, 1, 2],  # One pair
@@ -14,42 +13,7 @@ SORTED_HAND_STRENGTHS = [
 ]
 
 
-@dataclass
-class Card:
-    """
-    Represents a single card. The rank is a single character from 2 to A.
-    """
-
-    rank: str
-
-    def __lt__(self, other):
-        return RANKS.index(self.rank) < RANKS.index(other.rank)
-
-    def __eq__(self, other):
-        return self.rank == other.rank
-
-    def __hash__(self):
-        return hash(self.rank)
-
-
-@dataclass
-class WildCard(Card):
-    """
-    A subclass of Card that replaces "J" with a Joker wildcard.
-    """
-
-    def __lt__(self, other):
-        if self.rank == "J":
-            return True
-        if other.rank == "J":
-            return False
-        return super().__lt__(other)
-
-    def __hash__(self):
-        return super().__hash__()
-
-
-def calculate_strength(cards: List[Card]) -> int:
+def calculate_strength(cards: str) -> int:
     """
     Calculate the strength of a hand of cards. The strength is based on the Camel Card rules.
     """
@@ -63,33 +27,37 @@ class CardHand:
     Represents a hand of cards.
     """
 
-    cards: List[Card]
+    cards: str
+
+    # The ordering of the cards, from lowest to highest.
+    ordering: ClassVar[str] = field(init=False, default="23456789TJQKA")
+
+    # Helper attributes
     strength: int = field(init=False)
+    ranks: Tuple[int, ...] = field(init=False)
 
     def __post_init__(self):
         self.strength = self._calculate_strength()
+        self.ranks = tuple(self.ordering.index(card) for card in self.cards)
 
     def _calculate_strength(self) -> int:
         return calculate_strength(self.cards)
 
     def __lt__(self, other):
-        if self.strength != other.strength:
-            return self.strength < other.strength
-
-        for self_card, other_card in zip(self.cards, other.cards):
-            if self_card != other_card:
-                return self_card < other_card
+        return (
+            self.strength < other.strength
+            if self.strength != other.strength
+            else self.ranks < other.ranks
+        )
 
 
 @dataclass
 class WildCardHand(CardHand):
     """
-    A subclass of CardHand that replaces all cards with WildCards.
+    A subclass of CardHand that can contain Jokers. The ordering of the cards is changed to make Jokers the lowest card.
     """
 
-    def __post_init__(self):
-        self.cards = [WildCard(card.rank) for card in self.cards]
-        super().__post_init__()
+    ordering: ClassVar[str] = field(init=False, default="J23456789TQKA")
 
     def _calculate_strength(self) -> int:
         """
@@ -97,13 +65,13 @@ class WildCardHand(CardHand):
         """
         counter = Counter(self.cards)
 
-        if 1 <= counter[Card("J")] <= 4:
-            joker_count = counter.pop(Card("J"))
+        if 1 <= counter["J"] <= 4:
+            joker_count = counter.pop("J")
             most_common = counter.most_common(1)[0][0]
             counter[most_common] += joker_count
 
-        wildcards = list(counter.elements())
-        return calculate_strength(wildcards)
+        cards = "".join(counter.elements())
+        return calculate_strength(cards)
 
 
 @dataclass

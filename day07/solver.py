@@ -2,7 +2,7 @@ from typing import List
 
 from advent_of_code_solver import BaseSolver
 
-from .utils import CamelCard, Card, CardHand, WildCardHand
+from .utils import CamelCard, CardHand, WildCardHand
 
 
 def get_total_winnings(cards: List[CamelCard]) -> int:
@@ -16,7 +16,7 @@ class Solver(BaseSolver):
 
         for line in file.read().splitlines():
             cards, bid = line.split(" ")
-            hand = CardHand([Card(card) for card in cards])
+            hand = CardHand(cards)
             result.append(CamelCard(hand, int(bid)))
 
         return result
