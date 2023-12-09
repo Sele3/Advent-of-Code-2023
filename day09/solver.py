@@ -1,3 +1,4 @@
+from itertools import pairwise
 from typing import List
 
 from advent_of_code_solver import BaseSolver
@@ -10,7 +11,7 @@ def extrapolate(nums: List[int]) -> int:
     if all(num == 0 for num in nums):
         return 0
 
-    diffs = [nums[i] - nums[i - 1] for i in range(1, len(nums))]
+    diffs = [b - a for a, b in pairwise(nums)]
     return nums[-1] + extrapolate(diffs)
 
 
