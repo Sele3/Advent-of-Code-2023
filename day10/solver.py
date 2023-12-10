@@ -1,5 +1,7 @@
 from advent_of_code_solver import BaseSolver
 
+from .utils import *
+
 
 class Solver(BaseSolver):
     def parse_input(self, file):
