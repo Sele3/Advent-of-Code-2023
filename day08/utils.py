@@ -1,4 +1,5 @@
 from collections import namedtuple
+from itertools import cycle
 from math import lcm
 from typing import Dict, List
 
@@ -19,18 +20,11 @@ class SingleStartNavigator:
         """
         Returns the number of steps required to reach the destination node.
         """
-        idx = steps = 0
-
-        while True:
-            steps += 1
-            self._update_node_position(self.instructions[idx])
+        for steps, direction in enumerate(cycle(self.instructions), start=1):
+            self._update_node_position(direction)
 
             if self._has_reached_destination():
-                break
-
-            idx = (idx + 1) % len(self.instructions)
-
-        return steps
+                return steps
 
     def _update_node_position(self, direction: str) -> None:
         """
