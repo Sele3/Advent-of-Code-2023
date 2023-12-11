@@ -16,5 +16,5 @@ class Solver(BaseSolver):
 
     def solve_part2(self):
         image: GalaxyImage = self.input
-        image.times_larger = 1_000_000
+        image.set_times_larger(1_000_000)
         return image.calculate_total_path_distance()
