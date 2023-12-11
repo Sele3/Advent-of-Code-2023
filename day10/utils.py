@@ -1,61 +1,62 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass, field
 from typing import List, Set, Tuple
 
 
-@dataclass
 class Pipe(ABC):
-    r: int
-    c: int
+    def __init__(self, r: int, c: int, dr1: int, dc1: int, dr2: int, dc2: int):
+        self.r = r
+        self.c = c
+        self.pipe_end1 = (r + dr1, c + dc1)
+        self.pipe_end2 = (r + dr2, c + dc2)
 
-    @abstractmethod
     def get_other_end(self, from_r: int, from_c: int) -> Tuple[int, int]:
         """
         Returns the coordinates of the other end of the pipe, given the coordinates of one end of the pipe
         """
-        pass
+        return self.pipe_end1 if (from_r, from_c) == self.pipe_end2 else self.pipe_end2
 
 
 class NSPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
-        # Return the bottom end if coming from the top, otherwise return the top end
-        return (self.r + 1, self.c) if from_r < self.r else (self.r - 1, self.c)
+    def __init__(self, r: int, c: int):
+        # Top end and bottom end
+        super().__init__(r, c, -1, 0, 1, 0)
 
 
 class EWPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
-        # Return the right end if coming from the left, otherwise return the left end
-        return (self.r, self.c + 1) if from_c < self.c else (self.r, self.c - 1)
+    def __init__(self, r: int, c: int):
+        # Left end and right end
+        super().__init__(r, c, 0, -1, 0, 1)
 
 
 class NEPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
-        # Return the top end if coming from the right, otherwise return the right end
-        return (self.r - 1, self.c) if from_r == self.r else (self.r, self.c + 1)
+    def __init__(self, r: int, c: int):
+        # Top end and right end
+        super().__init__(r, c, -1, 0, 0, 1)
 
 
 class NWPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
-        # Return the top end if coming from the left, otherwise return the left end
-        return (self.r - 1, self.c) if from_r == self.r else (self.r, self.c - 1)
+    def __init__(self, r: int, c: int):
+        # Top end and left end
+        super().__init__(r, c, -1, 0, 0, -1)
 
 
 class SEPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
-        # Return the bottom end if coming from the right, otherwise return the right end
-        return (self.r + 1, self.c) if from_r == self.r else (self.r, self.c + 1)
+    def __init__(self, r: int, c: int):
+        # Bottom end and right end
+        super().__init__(r, c, 1, 0, 0, 1)
 
 
 class SWPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
-        # Return the bottom end if coming from the left, otherwise return the left end
-        return (self.r + 1, self.c) if from_r == self.r else (self.r, self.c - 1)
+    def __init__(self, r: int, c: int):
+        # Bottom end and left end
+        super().__init__(r, c, 1, 0, 0, -1)
 
 
 class StartPipe(Pipe):
-    def get_other_end(self, from_r: int, from_c: int):
+    def __init__(self, r: int, c: int):
         # We can assume that one end of the starting pipe is always pointing down
-        return self.r + 1, self.c
+        super().__init__(r, c, 0, 0, 1, 0)
 
 
 PIPES = {
