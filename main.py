@@ -1,5 +1,6 @@
 import importlib
 from datetime import datetime
+from timeit import default_timer as timer
 
 DAY_COUNT = datetime.today().day
 
@@ -16,6 +17,8 @@ if __name__ == "__main__":
     day_str = str(DAY_COUNT).zfill(2)
     input_file = f"day{day_str}/input.txt"
 
+    start = timer()
+
     try:
         solver = create_solver(day_str, input_file)
         solver.read_input_file()
@@ -28,3 +31,6 @@ if __name__ == "__main__":
 
     part2_solution = solver.solve_part2()
     print(f"Part 2 Solution: {part2_solution}")
+
+    end = timer()
+    print(f"Time Elapsed: {end - start}")
