@@ -31,15 +31,13 @@ class Solver(BaseSolver):
         ht = [DoubleLinkedList() for _ in range(TABLE_SIZE)]
 
         for step in self.input.split(","):
-            if step[-1] == "-":  # Remove the focal node.
-                label = step[:-1]
-                idx = custom_hash(label)
-                ht[idx].remove(label)
+            match step.strip("-").split("="):
+                case [label]:  # Remove the focal node.
+                    idx = custom_hash(label)
+                    ht[idx].remove(label)
 
-            else:  # Insert the focal node.
-                label, focal = step.split("=")
-                focal = int(focal)
-                idx = custom_hash(label)
-                ht[idx].insert(label, focal)
+                case [label, focal]:  # Insert the focal node.
+                    idx = custom_hash(label)
+                    ht[idx].insert(label, int(focal))
 
         return sum(idx * dll.get_total_power() for idx, dll in enumerate(ht, start=1))
