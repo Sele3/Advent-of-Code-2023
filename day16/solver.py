@@ -1,6 +1,16 @@
+from multiprocessing import Pool, cpu_count
+
 from advent_of_code_solver import BaseSolver
 
 from .utils import BeamGrid, D, L, R, U
+
+
+def process_row(starting_position, grid):
+    """
+    Helper function for multiprocessing
+    """
+    r, c, d = starting_position
+    return grid.count_energized_tiles(r, c, d)
 
 
 class Solver(BaseSolver):
@@ -13,14 +23,17 @@ class Solver(BaseSolver):
 
     def solve_part2(self):
         grid: BeamGrid = self.input
-        curr_max = 0
 
-        for r in range(grid.m):
-            curr_max = max(curr_max, grid.count_energized_tiles(r, 0, R))
-            curr_max = max(curr_max, grid.count_energized_tiles(r, grid.n - 1, L))
+        starting_positions = (
+            [(r, 0, R) for r in range(grid.m)]
+            + [(r, grid.n - 1, L) for r in range(grid.m)]
+            + [(0, c, D) for c in range(grid.n)]
+            + [(grid.m - 1, c, U) for c in range(grid.n)]
+        )
 
-        for c in range(grid.n):
-            curr_max = max(curr_max, grid.count_energized_tiles(0, c, D))
-            curr_max = max(curr_max, grid.count_energized_tiles(grid.m - 1, c, U))
+        with Pool(cpu_count()) as pool:
+            results = pool.starmap(
+                process_row, [(pos, grid) for pos in starting_positions]
+            )
 
-        return curr_max
+        return max(results)
