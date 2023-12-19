@@ -1,6 +1,6 @@
-from advent_of_code_solver import BaseSolver
+from collections import defaultdict
 
-from .utils import DoubleLinkedList
+from advent_of_code_solver import BaseSolver
 
 TABLE_SIZE = 256
 
@@ -19,6 +19,13 @@ def custom_hash(s: str) -> int:
     return curr
 
 
+def get_total_power(hm: dict) -> int:
+    """
+    Traverse the dictionary and compute the total power of the focal nodes.
+    """
+    return sum(idx * val for idx, val in enumerate(hm.values(), start=1))
+
+
 class Solver(BaseSolver):
     def parse_input(self, file):
         return file.read().strip()
@@ -28,16 +35,17 @@ class Solver(BaseSolver):
 
     def solve_part2(self):
         # Initialize the hash table.
-        ht = [DoubleLinkedList() for _ in range(TABLE_SIZE)]
+        ht = [defaultdict(int) for _ in range(TABLE_SIZE)]
 
         for step in self.input.split(","):
             match step.strip("-").split("="):
                 case [label]:  # Remove the focal node.
                     idx = custom_hash(label)
-                    ht[idx].remove(label)
+                    if label in ht[idx]:
+                        del ht[idx][label]
 
                 case [label, focal]:  # Insert the focal node.
                     idx = custom_hash(label)
-                    ht[idx].insert(label, int(focal))
+                    ht[idx][label] = int(focal)
 
-        return sum(idx * dll.get_total_power() for idx, dll in enumerate(ht, start=1))
+        return sum(idx * get_total_power(hm) for idx, hm in enumerate(ht, start=1))
