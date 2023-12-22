@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import TextIO
 
 
 class BaseSolver(ABC):
@@ -11,7 +12,7 @@ class BaseSolver(ABC):
             self.input = self.parse_input(file)
 
     @abstractmethod
-    def parse_input(self, file):
+    def parse_input(self, file: TextIO):
         pass
 
     @abstractmethod
