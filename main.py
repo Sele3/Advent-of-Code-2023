@@ -2,7 +2,7 @@ import importlib
 from datetime import datetime
 from timeit import default_timer as timer
 
-DAY_COUNT = datetime.today().day - 1
+DAY_COUNT = datetime.today().day
 
 
 def create_solver(day_str: str, input_file):
