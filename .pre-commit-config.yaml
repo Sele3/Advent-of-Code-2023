@@ -1,10 +1,9 @@
 repos:
-    - repo: https://github.com/LiquidFun/aoc_tiles
-      rev: 0.6.0
-      hooks:
-          - id: aoc-tiles
-            args:
-                - --auto-add-tiles-to-git=amend
-                - --overwrite_year=2023
-                - --day_pattern=(?<!\d)(day[012]?\d)(?!\d)
-                - --verbose=True
+  - repo: https://github.com/LiquidFun/aoc_tiles
+    rev: 0.6.0
+    hooks:
+      - id: aoc-tiles
+        args:
+          - --auto-add-tiles-to-git=amend
+          - --overwrite_year=2023
+          - --day_pattern=(?<!\d)(day[012]?\d)(?!\d)
