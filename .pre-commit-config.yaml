@@ -7,3 +7,4 @@ repos:
           - --auto-add-tiles-to-git=amend
           - --overwrite-year=2023
           - --day-pattern=(?<!\d)day([012]?\d)(?!\d)
+          - --exclude-patterns=*__init__.py
