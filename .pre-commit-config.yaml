@@ -6,5 +6,5 @@ repos:
             args:
                 - --auto-add-tiles-to-git=amend
                 - --overwrite_year=2023
-                - --day_pattern=(day[012]?\d)
+                - --day_pattern=(?<!\d)(day[012]?\d)(?!\d)
                 - --verbose=True
