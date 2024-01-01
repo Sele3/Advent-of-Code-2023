@@ -6,4 +6,4 @@ repos:
         args:
           - --auto-add-tiles-to-git=amend
           - --overwrite-year=2023
-          - --day-pattern=(?<!\d)(day[012]?\d)(?!\d)
+          - --day-pattern=(?<!\d)day([012]?\d)(?!\d)
